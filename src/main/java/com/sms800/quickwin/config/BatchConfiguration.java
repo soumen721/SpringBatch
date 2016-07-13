@@ -7,6 +7,8 @@ import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
+import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -31,6 +33,11 @@ import com.sms800.quickwin.batch.Student;
 @EnableBatchProcessing
 public class BatchConfiguration {
 
+	@Bean
+	BatchConfigurer configurer(@Qualifier("dataSourceqQW")DataSource dataSource){
+	  return new DefaultBatchConfigurer(dataSource);
+	}
+	
     @Bean
     public ItemReader<Student> reader(@Qualifier("dataSourceqWH") DataSource dataSource) {
         /*FlatFileItemReader<Student> reader = new FlatFileItemReader<Student>();
@@ -74,12 +81,12 @@ public class BatchConfiguration {
     
     @Bean
     public ItemProcessor<Student, Marksheet> processor() {
-        return new StudentItemProcessor();
+        return new DBMigrationProcessor();
     }
 
     @Bean
     public Job createMarkSheet(JobBuilderFactory jobs, Step step) {
-        return jobs.get("createMarkSheet"+System.currentTimeMillis())
+        return jobs.get("dbmigration_"+System.currentTimeMillis())
                 .flow(step)
                 .end()
                 .build();

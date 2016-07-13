@@ -1,35 +1,20 @@
 package com.sms800.quickwin.config;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.springframework.batch.core.configuration.annotation.BatchConfigurer;
-import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-
-import com.sms800.quickwin.batch.Marksheet;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@Import({BatchConfiguration.class})
+@Import({JobRunner.class})
 public class DbMigraionBatchApplication implements CommandLineRunner{
 
-	@Bean
-	BatchConfigurer configurer(@Qualifier("dataSourceqQW")DataSource dataSource){
-	  return new DefaultBatchConfigurer(dataSource);
-	}
+	
 	
 	@Autowired
 	@Qualifier("dataSourceqWH")
