@@ -1,4 +1,4 @@
-package com.sms800.quickwin.batch;
+package com.sms800.quickwin.config;
 
 import javax.sql.DataSource;
 
@@ -21,6 +21,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+
+import com.sms800.quickwin.batch.Marksheet;
+import com.sms800.quickwin.batch.Student;
 
 @Configuration
 @EnableBatchProcessing

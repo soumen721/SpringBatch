@@ -1,4 +1,4 @@
-package com.sms800.quickwin;
+package com.sms800.quickwin.config;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import com.sms800.quickwin.batch.BatchConfiguration;
 import com.sms800.quickwin.batch.Marksheet;
 
 @SpringBootApplication

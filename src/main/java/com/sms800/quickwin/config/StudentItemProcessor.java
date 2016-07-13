@@ -1,6 +1,9 @@
-package com.sms800.quickwin.batch;
+package com.sms800.quickwin.config;
 
 import org.springframework.batch.item.ItemProcessor;
+
+import com.sms800.quickwin.batch.Marksheet;
+import com.sms800.quickwin.batch.Student;
 
 public class StudentItemProcessor implements ItemProcessor<Student, Marksheet> {
 
