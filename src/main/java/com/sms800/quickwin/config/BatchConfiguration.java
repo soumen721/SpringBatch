@@ -94,7 +94,9 @@ public class BatchConfiguration {
 
 	@Bean
 	public Step step() {
-		return steps.get("step").<Student, Marksheet> chunk(2).reader(reader())
+		return steps.get("step")
+				.<Student, Marksheet> chunk(2)
+				.reader(reader())
 				.processor(processor())
 				.writer(writer()).build();
 	}
