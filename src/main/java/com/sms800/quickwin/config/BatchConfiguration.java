@@ -18,6 +18,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -35,63 +36,67 @@ import com.sms800.quickwin.batch.Student;
 public class BatchConfiguration {
 
 	@Bean
-	BatchConfigurer configurer(@Qualifier("dataSourceqQW")DataSource dataSource){
-	  return new DefaultBatchConfigurer(dataSource);
+	BatchConfigurer configurer(@Qualifier("dataSourceqQW") DataSource dataSource) {
+		return new DefaultBatchConfigurer(dataSource);
 	}
+
+	@Autowired
+	private JobBuilderFactory jobs;
+
+	@Autowired
+	private StepBuilderFactory steps;
+
+	@Autowired
+	@Qualifier("dataSourceqQW")
+	DataSource dataSourceqQW;
 	
-    @Bean
-    public ItemReader<Student> reader(@Qualifier("dataSourceqWH") DataSource dataSource) {
-        
-        JdbcCursorItemReader<Student> databaseReader = new JdbcCursorItemReader<>();
-        databaseReader.setDataSource(dataSource);
-        databaseReader.setSql("select areacode, areacode from areacode LIMIT 10 ");
-        databaseReader.setRowMapper(new RowMapper<Student>() {
+	@Autowired
+	@Qualifier("dataSourceqWH")
+	DataSource dataSourceqWH;
+	
+	@Bean
+	public ItemReader<Student> reader() {
+		JdbcCursorItemReader<Student> databaseReader = new JdbcCursorItemReader<>();
+		databaseReader.setDataSource(dataSourceqWH);
+		databaseReader.setSql("select areacode, areacode from areacode LIMIT 10 ");
+		databaseReader.setRowMapper(new RowMapper<Student>() {
 			@Override
 			public Student mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Student stu=new Student();
+				Student stu = new Student();
 				stu.setStdId(rs.getString("areacode"));
 				stu.setSubMarkOne(rs.getInt("areacode"));
-				
+
 				return stu;
 			}
 		});
-		
-        return databaseReader;
-        
-    }
-   
-    @Bean  
-    public ItemWriter<Marksheet> writer(@Qualifier("dataSourceqQW") DataSource dataSource) {
-        JdbcBatchItemWriter<Marksheet> writer = new JdbcBatchItemWriter<Marksheet>();
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<Marksheet>());
-        writer.setSql("INSERT INTO marksheet (studentId,totalMark) VALUES (:stdId,:totalSubMark)");
-        writer.setDataSource(dataSource);
-        return writer;
-    }
-    
-    @Bean
-    public ItemProcessor<Student, Marksheet> processor() {
-        return new DBMigrationProcessor();
-    }
 
-    @Bean
-    //@Scheduled(fixedRate = 5000)
-    public Job createMarkSheet(JobBuilderFactory jobs, Step step) {
-        return jobs.get("dbmigration_"+System.currentTimeMillis())
-                .flow(step)
-                .end()
-                .build();
-    }
+		return databaseReader;
+	}
 
-    @Bean
-    public Step step(StepBuilderFactory stepBuilderFactory, ItemReader<Student> reader,
-            ItemWriter<Marksheet> writer, ItemProcessor<Student, Marksheet> processor) {
-        return stepBuilderFactory.get("step")
-                .<Student, Marksheet> chunk(2)
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .build();
-    }
+	@Bean
+	public ItemWriter<Marksheet> writer() {
+		JdbcBatchItemWriter<Marksheet> writer = new JdbcBatchItemWriter<Marksheet>();
+		writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<Marksheet>());
+		writer.setSql("INSERT INTO marksheet (studentId,totalMark) VALUES (:stdId,:totalSubMark)");
+		writer.setDataSource(dataSourceqQW);
+		return writer;
+	}
+
+	@Bean
+	public ItemProcessor<Student, Marksheet> processor() {
+		return new DBMigrationProcessor();
+	}
+
+	@Bean
+	public Job dbmigrationJob() {
+		return jobs.get("dbmigration_" + System.currentTimeMillis()).flow(step()).end().build();
+	}
+
+	@Bean
+	public Step step() {
+		return steps.get("step").<Student, Marksheet> chunk(2).reader(reader())
+				.processor(processor())
+				.writer(writer()).build();
+	}
 
 }

@@ -15,12 +15,10 @@ import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 import com.sms800.quickwin.job.DBMigrationJob;
 import com.sms800.quickwin.job.service.DBMigrationJobService;
   
-@Configuration 
+//@Configuration 
 public class QuartzConfiguration {
 	@Autowired
 	DBMigrationJobService dbMigrationJobServiec;
-	/*@Autowired
-	BatchConfiguration batchConfiguration;*/
 	
 	//@Bean
 	public MethodInvokingJobDetailFactoryBean methodInvokingJobDetailFactoryBean() {

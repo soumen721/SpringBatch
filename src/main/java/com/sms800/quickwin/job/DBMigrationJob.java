@@ -6,14 +6,10 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.quartz.PersistJobDataAfterExecution;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import com.sms800.quickwin.job.service.DBMigrationJobService;
 
-@Configuration 
-@Import({DBMigrationJobService.class})
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
 public class DBMigrationJob extends QuartzJobBean {

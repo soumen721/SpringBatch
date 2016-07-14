@@ -9,18 +9,17 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@ComponentScan(basePackages ={"com.sms800.quickwin.job", "com.sms800.quickwin.job.service"})
-@Import({DBConfig.class, QuartzConfiguration.class})
-public class DbMigraionBatchApplication implements CommandLineRunner{
-	
+@ComponentScan(basePackages = { "com.sms800.quickwin.job", "com.sms800.quickwin.job.service" })
+// @Import({DBConfig.class, QuartzConfiguration.class})
+@Import({ DBConfig.class, JobScheduler.class, BatchConfiguration.class })
+public class DbMigraionBatchApplication implements CommandLineRunner {
+
 	public static void main(String[] args) {
 		SpringApplication.run(DbMigraionBatchApplication.class, args);
 	}
 
-	
-    @Override
+	@Override
 	public void run(String... arg0) throws Exception {
-    	//TO DO
+		// TO DO
 	}
 }
-
