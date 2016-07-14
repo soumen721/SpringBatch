@@ -13,7 +13,6 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
 import com.sms800.quickwin.job.DBMigrationJob;
-import com.sms800.quickwin.job.MyJobTwo;
 import com.sms800.quickwin.job.service.DBMigrationJobService;
   
 @Configuration 
@@ -45,7 +44,7 @@ public class QuartzConfiguration {
 		factory.setJobClass(DBMigrationJob.class);
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("name", "DB-Migration");
-		map.put(MyJobTwo.COUNT, 1);
+		map.put(DBMigrationJob.COUNT, 1);
 		map.put("dbMigrationJobServiec", dbMigrationJobServiec);
 		//map.put("batchConfiguration", batchConfiguration);
 		
