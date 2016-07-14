@@ -19,18 +19,19 @@ import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourc
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import com.sms800.quickwin.batch.Marksheet;
 import com.sms800.quickwin.batch.Student;
 
 @Configuration
 @EnableBatchProcessing
+@ComponentScan
+@EnableAutoConfiguration
 public class BatchConfiguration {
 
 	@Bean
@@ -40,17 +41,6 @@ public class BatchConfiguration {
 	
     @Bean
     public ItemReader<Student> reader(@Qualifier("dataSourceqWH") DataSource dataSource) {
-        /*FlatFileItemReader<Student> reader = new FlatFileItemReader<Student>();
-        reader.setResource(new ClassPathResource("student-data.csv"));
-        reader.setLineMapper(new DefaultLineMapper<Student>() {{
-            setLineTokenizer(new DelimitedLineTokenizer() {{
-                setNames(new String[] {"stdId", "subMarkOne", "subMarkTwo" });
-            }});
-            setFieldSetMapper(new BeanWrapperFieldSetMapper<Student>() {{
-                setTargetType(Student.class);
-            }});	
-        }});*/
-    	//return reader;
         
         JdbcCursorItemReader<Student> databaseReader = new JdbcCursorItemReader<>();
         databaseReader.setDataSource(dataSource);
@@ -85,6 +75,7 @@ public class BatchConfiguration {
     }
 
     @Bean
+    //@Scheduled(fixedRate = 5000)
     public Job createMarkSheet(JobBuilderFactory jobs, Step step) {
         return jobs.get("dbmigration_"+System.currentTimeMillis())
                 .flow(step)
@@ -102,39 +93,5 @@ public class BatchConfiguration {
                 .writer(writer)
                 .build();
     }
-
-    @Bean
-    @Qualifier("dataSourceqQW")
-    @Primary
-    public JdbcTemplate jdbcTemplateQW(DataSource dataSource) {
-        return new JdbcTemplate(getDataSourceQW());
-    }
-    
-    @Bean
-    @Qualifier("dataSourceqWH")
-    public JdbcTemplate jdbcTemplateWH(DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
-    }
-    
-    @Bean(name="dataSourceqQW")
-    @Primary
-	public DataSource getDataSourceQW() {
-    	DriverManagerDataSource dataSource = new DriverManagerDataSource();
-	    dataSource.setDriverClassName("com.mysql.jdbc.Driver");	
-	    dataSource.setUrl("jdbc:mysql://localhost:3306/springbatch?characterEncoding=UTF-8&useSSL=false");
-	    dataSource.setUsername("root");
-	    dataSource.setPassword("password");
-	    return dataSource;
-	}
-    
-    @Bean(name="dataSourceqWH")
-	public DataSource getDataSourceWH() {
-    	DriverManagerDataSource dataSource = new DriverManagerDataSource();
-	    dataSource.setDriverClassName("com.mysql.jdbc.Driver");	
-	    dataSource.setUrl("jdbc:mysql://localhost:3306/dbmigration?characterEncoding=UTF-8&useSSL=false");
-	    dataSource.setUsername("root");
-	    dataSource.setPassword("password");
-	    return dataSource;
-	}
 
 }
